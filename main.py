@@ -1,4 +1,5 @@
 import os
+import sys
 import zipfile
 import shutil
 
@@ -7,14 +8,17 @@ dir_output = os.path.join(desktop_path,"msfiles")
 dir_temp = os.path.join(dir_output,"temp")
 
 def main():
-    file_path = input("ファイルパスを入力: ")
+    #対象のファイルパスを取得
+    if len(sys.argv) > 1:
+        file_path = sys.argv[1]
+    else:
+        file_path = input("ファイルパスを入力: ")
 
     # 作業用ディレクトリを作成し、対象をzipとして保存
     makeWorkfile(file_path)
 
     # mediaの中身をコピー
     getMadiafiles()
-
 
     # 終了処理
     # tempディレクトリ削除
