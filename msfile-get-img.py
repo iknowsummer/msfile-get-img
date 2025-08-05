@@ -4,21 +4,22 @@ import io
 import shutil
 import sys
 
+
 desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
 dir_output = os.path.join(desktop_path, "msfiles")
+
+# Office拡張子とmediaディレクトリの対応表
+OFFICE_MEDIA_MAP = {
+    ".docx": "word/media/",
+    ".xlsx": "xl/media/",
+    ".pptx": "ppt/media/",
+}
 
 
 def office_media_to_zip_stream(file_stream):
     # file_streamのzipからmediaフォルダだけ新しいzipバイトストリームに詰める
     output_stream = io.BytesIO()
-
-    # 各Office形式ごとのmediaディレクトリ候補
-    media_dirs = [
-        "word/media/",  # docx
-        "xl/media/",  # xlsx
-        "ppt/media/",  # pptx
-    ]
-
+    media_dirs = OFFICE_MEDIA_MAP.values()
     with (
         zipfile.ZipFile(file_stream, "r") as zin,
         zipfile.ZipFile(output_stream, "w") as zout,
@@ -30,7 +31,6 @@ def office_media_to_zip_stream(file_stream):
             )
             if is_media_file:
                 zout.writestr(os.path.basename(name), zin.read(name))
-
     output_stream.seek(0)
     return output_stream
 
@@ -53,9 +53,7 @@ def save_zip_stream(zip_stream, output_zip_path):
 
 def is_office_file(filename):
     # ファイル名がOfficeファイルの拡張子で終わるかチェック
-    # 対応する拡張子は.docx, .xlsx, .pptx
-    office_exts = (".docx", ".xlsx", ".pptx")
-    return filename.lower().endswith(office_exts)
+    return filename.lower().endswith(tuple(OFFICE_MEDIA_MAP.keys()))
 
 
 def main(zipsave=False):
