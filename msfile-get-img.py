@@ -38,11 +38,23 @@ def save_zip_stream(zip_stream, output_zip_path):
         f.write(zip_stream.getbuffer())
 
 
+def is_office_file(filename):
+    # ファイル名がOfficeファイルの拡張子で終わるかチェック
+    # 対応する拡張子は.docx, .xlsx, .pptx
+    office_exts = (".docx", ".xlsx", ".pptx")
+    return filename.lower().endswith(office_exts)
+
+
 def main(zipsave=False):
     if len(sys.argv) > 1:
         file_path = sys.argv[1]
     else:
         file_path = input("ファイルパスを入力: ")
+
+    # 対象ファイルかチェック
+    if not is_office_file(file_path):
+        print("対象のOfficeファイルではありません。")
+        return
 
     with open(file_path, "rb") as f:
         zip_stream = extract_media_to_zip_stream(f)
