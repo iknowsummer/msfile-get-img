@@ -8,16 +8,29 @@ desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
 dir_output = os.path.join(desktop_path, "msfiles")
 
 
-def extract_media_to_zip_stream(file_stream):
+def office_media_to_zip_stream(file_stream):
     # file_streamのzipからmediaフォルダだけ新しいzipバイトストリームに詰める
     output_stream = io.BytesIO()
+
+    # 各Office形式ごとのmediaディレクトリ候補
+    media_dirs = [
+        "word/media/",  # docx
+        "xl/media/",  # xlsx
+        "ppt/media/",  # pptx
+    ]
+
     with (
         zipfile.ZipFile(file_stream, "r") as zin,
         zipfile.ZipFile(output_stream, "w") as zout,
     ):
         for name in zin.namelist():
-            if name.startswith("word/media/") and not name.endswith("/"):
+            is_media_file = any(
+                name.startswith(media_dir) and not name.endswith("/")
+                for media_dir in media_dirs
+            )
+            if is_media_file:
                 zout.writestr(os.path.basename(name), zin.read(name))
+
     output_stream.seek(0)
     return output_stream
 
@@ -57,7 +70,7 @@ def main(zipsave=False):
         return
 
     with open(file_path, "rb") as f:
-        zip_stream = extract_media_to_zip_stream(f)
+        zip_stream = office_media_to_zip_stream(f)
 
     if zipsave:
         output_zip_path = os.path.join(dir_output, "media_files.zip")
