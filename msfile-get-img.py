@@ -5,9 +5,6 @@ import shutil
 import sys
 
 
-desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
-dir_output = os.path.join(desktop_path, "msfiles")
-
 # Office拡張子とmediaディレクトリの対応表
 OFFICE_MEDIA_MAP = {
     ".docx": "word/media/",
@@ -67,9 +64,15 @@ def main(zipsave=False):
         print("対象のOfficeファイルではありません。")
         return
 
+    # ファイルをzipストリームに変換
     with open(file_path, "rb") as f:
         zip_stream = office_media_to_zip_stream(f)
 
+    # デスクトップにmsfilesディレクトリを作成し保存場所に設定
+    desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
+    dir_output = os.path.join(desktop_path, "msfiles")
+
+    # ファイルとして保存
     if zipsave:
         output_zip_path = os.path.join(dir_output, "media_files.zip")
         os.makedirs(dir_output, exist_ok=True)
