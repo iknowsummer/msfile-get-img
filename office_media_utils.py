@@ -43,6 +43,6 @@ def office_media_to_zip_stream(file_stream):
             for name in media_files:
                 zout.writestr(os.path.basename(name), zin.read(name))
         output_stream.seek(0)
-        return output_stream
+        return output_stream.getvalue()
     except zipfile.BadZipFile:
         raise RuntimeError("ファイルが壊れている可能性があります (BadZipFile)")
