@@ -2,8 +2,10 @@ import os
 import shutil
 import sys
 import zipfile
+import io
 
 from office_media_utils import (
+    OFFICE_MEDIA_MAP,
     office_media_to_zip_stream,
     is_office_file,
 )
@@ -27,12 +29,14 @@ def main():
 
     # 対象ファイルかチェック
     if not is_office_file(file_path):
-        print("対象のOfficeファイルではありません。")
+        exts = "、".join(ext.lstrip(".") for ext in OFFICE_MEDIA_MAP.keys())
+        print(f"対象のOfficeファイル（{exts}）ではありません。")
         return
 
     # ファイルをzipストリームに変換
     with open(file_path, "rb") as f:
-        zip_stream = office_media_to_zip_stream(f)
+        zip_bytes = office_media_to_zip_stream(f)
+        zip_stream = io.BytesIO(zip_bytes)
 
     # デスクトップにmsfilesディレクトリを作成し保存場所に設定
     desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
