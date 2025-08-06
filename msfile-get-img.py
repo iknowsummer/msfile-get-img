@@ -4,6 +4,7 @@ import sys
 import zipfile
 
 from office_media_utils import (
+    OFFICE_MEDIA_MAP,
     office_media_to_zip_stream,
     is_office_file,
 )
@@ -27,7 +28,8 @@ def main():
 
     # 対象ファイルかチェック
     if not is_office_file(file_path):
-        print("対象のOfficeファイルではありません。")
+        exts = "、".join(ext.lstrip(".") for ext in OFFICE_MEDIA_MAP.keys())
+        print(f"対象のOfficeファイル（{exts}）ではありません。")
         return
 
     # ファイルをzipストリームに変換
