@@ -28,13 +28,20 @@ def office_media_to_zip_stream(file_stream):
             zipfile.ZipFile(file_stream, "r") as zin,
             zipfile.ZipFile(output_stream, "w") as zout,
         ):
-            for name in zin.namelist():
-                is_media_file = any(
+            media_files = [
+                name
+                for name in zin.namelist()
+                if any(
                     name.startswith(media_dir) and not name.endswith("/")
                     for media_dir in media_dirs
                 )
-                if is_media_file:
-                    zout.writestr(os.path.basename(name), zin.read(name))
+            ]
+            if not media_files:
+                raise RuntimeError(
+                    "ファイル構成エラー。メディアを抽出できませんでした。"
+                )
+            for name in media_files:
+                zout.writestr(os.path.basename(name), zin.read(name))
         output_stream.seek(0)
         return output_stream
     except zipfile.BadZipFile:
