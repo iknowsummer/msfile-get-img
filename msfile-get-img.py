@@ -19,15 +19,7 @@ def save_and_extract_zip_stream(zip_stream, output_dir):
         zip_ref.extractall(output_dir)
 
 
-def save_zip_stream(zip_stream, output_zip_path):
-    """
-    zip_streamをoutput_zip_pathにzipファイルとして保存
-    """
-    with open(output_zip_path, "wb") as f:
-        f.write(zip_stream.getbuffer())
-
-
-def main(zipsave=True):
+def main():
     if len(sys.argv) > 1:
         file_path = sys.argv[1]
     else:
@@ -46,15 +38,9 @@ def main(zipsave=True):
     desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
     dir_output = os.path.join(desktop_path, "msfiles")
 
-    # ファイルとして保存
-    if zipsave:
-        output_zip_path = os.path.join(dir_output, "media_files.zip")
-        os.makedirs(dir_output, exist_ok=True)
-        save_zip_stream(zip_stream, output_zip_path)
-        os.startfile(dir_output)
-    else:
-        save_and_extract_zip_stream(zip_stream, dir_output)
-        os.startfile(dir_output)
+    # zipストリームを解凍して保存
+    save_and_extract_zip_stream(zip_stream, dir_output)
+    os.startfile(dir_output)
 
 
 if __name__ == "__main__":
