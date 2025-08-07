@@ -1,8 +1,24 @@
-from fastapi import FastAPI, File, UploadFile, Response
-from office_media_utils import office_media_to_zip_stream
 import io
+import os
+from dotenv import load_dotenv
+
+from fastapi import FastAPI, File, UploadFile, Response
+from fastapi.middleware.cors import CORSMiddleware
+
+from office_media_utils import office_media_to_zip_stream
+
+load_dotenv()
+origins = os.getenv("CORS_ORIGINS", "").split(",")
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
