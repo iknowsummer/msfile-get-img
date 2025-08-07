@@ -4,6 +4,9 @@ import sys
 import zipfile
 import io
 
+# sys.pathに親ディレクトリを追加
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from office_media_utils import (
     OFFICE_MEDIA_MAP,
     office_media_to_zip_stream,
