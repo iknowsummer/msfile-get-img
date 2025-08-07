@@ -1,0 +1,11 @@
+{
+  "name": "msfile-get-img",
+  "version": "1.0.0",
+  "description": "FastAPI backend runner",
+  "main": "fastapi-dev.js",
+  "scripts": {
+    "fastapi-dev": "node scripts/fastapi-dev.js"
+  },
+  "author": "",
+  "license": "MIT"
+}

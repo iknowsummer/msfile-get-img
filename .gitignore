@@ -1,1 +1,5 @@
-__pycache__
+# 一時ファイル
+**/tmp/
+
+# Pythonのキャッシュファイル
+**/__pycache__/
