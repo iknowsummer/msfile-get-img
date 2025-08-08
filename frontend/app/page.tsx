@@ -1,32 +1,45 @@
 "use client";
-import React from "react";
+
+import React, { useState } from "react";
 
 export default function Home() {
+  const [error, setError] = useState<string | null>(null);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError(null);
 
-    const input = (e.target as HTMLFormElement).elements.namedItem(
-      "file"
-    ) as HTMLInputElement;
-    if (!input.files?.[0]) return;
+    try {
+      const input = (e.target as HTMLFormElement).elements.namedItem(
+        "file"
+      ) as HTMLInputElement;
+      if (!input.files?.[0]) return;
 
-    const formData = new FormData();
-    formData.append("file", input.files[0]);
+      const formData = new FormData();
+      formData.append("file", input.files[0]);
 
-    const res = await fetch("http://localhost:8000/extract-office-media", {
-      method: "POST",
-      body: formData,
-    });
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const res = await fetch(`${apiBaseUrl}/extract-office-media`, {
+        method: "POST",
+        body: formData,
+      });
 
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
+      if (!res.ok) {
+        throw new Error(`サーバーエラー: ${res.status}`);
+      }
 
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "mediafiles.zip";
-    a.click();
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
 
-    URL.revokeObjectURL(url);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "mediafiles.zip";
+      a.click();
+
+      URL.revokeObjectURL(url);
+    } catch (_err: unknown) {
+      setError("通信エラー。サーバーから応答がありません。");
+    }
   };
 
   return (
@@ -47,6 +60,11 @@ export default function Home() {
             type="file"
             name="file"
           />
+          {error && (
+            <div className="mb-4 text-red-600 text-center border border-red-300 bg-red-50 rounded p-2">
+              {error}
+            </div>
+          )}
           <button
             className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded transition-colors duration-200"
             type="submit"
