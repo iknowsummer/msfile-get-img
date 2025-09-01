@@ -3,3 +3,5 @@
 
 # Pythonのキャッシュファイル
 **/__pycache__/
+
+.env
